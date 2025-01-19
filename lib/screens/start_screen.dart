@@ -30,7 +30,7 @@ class _StartScreenState extends State<StartScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.quiz,
                   size: 100,
                   color: Colors.blue,

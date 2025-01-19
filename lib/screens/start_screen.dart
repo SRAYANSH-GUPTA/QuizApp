@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quiz_app/screens/question_screen.dart';
+
 import 'dart:developer';
 import 'package:quiz_app/screens/topic.dart';
 
@@ -30,7 +30,7 @@ class _StartScreenState extends State<StartScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.quiz,
                   size: 100,
                   color: Colors.blue,

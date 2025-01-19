@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/model/quiz_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quiz_app/screens/question_screen.dart';
+
 import 'package:quiz_app/services/questions_fetch.dart';
 
 final quizProvider = FutureProvider<Quiz>((ref) async {
@@ -98,12 +98,12 @@ class Topic extends ConsumerWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const QuestionScreen(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const QuestionScreen(),
+                              //   ),
+                              // );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,

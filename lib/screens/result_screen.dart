@@ -52,6 +52,7 @@ class _ResultState extends ConsumerState<ResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;  
     final quizState = ref.watch(quizProvider);
     final correctAnswers =
         ref.read(quizProvider.notifier).getCorrectAnswersCount();
@@ -141,24 +142,32 @@ class _ResultState extends ConsumerState<ResultScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              ref.read(quizProvider.notifier).resetQuiz();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const topic.Topic()),
-                                (route) => false,
-                              );
-                            },
-                            icon: const Icon(Icons.refresh),
-                            label: Text(
-                              'Try Again',
-                              style: GoogleFonts.poppins(fontSize: 16),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue.shade800,
+                          Container(
+                            width: width * 0.5,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                ref.read(quizProvider.notifier).resetQuiz();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const topic.Topic()),
+                                  (route) => false,
+                                );
+                              },
+                              icon: const Icon(Icons.refresh),
+                              
+                              label: Text(
+                                'Try Again',
+                                style: GoogleFonts.poppins(fontSize: 16),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

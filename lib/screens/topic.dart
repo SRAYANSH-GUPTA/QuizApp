@@ -75,6 +75,7 @@ class _TopicState extends ConsumerState<Topic> {
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -109,7 +110,7 @@ class _TopicState extends ConsumerState<Topic> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.black.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Column(
@@ -119,8 +120,8 @@ class _TopicState extends ConsumerState<Topic> {
                                 quiz.topic,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -128,7 +129,8 @@ class _TopicState extends ConsumerState<Topic> {
                                 quiz.title,
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
-                                  color: Colors.white70,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -190,13 +192,14 @@ class _TopicState extends ConsumerState<Topic> {
   Widget _buildInfoItem(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white70, size: 20),
+        Icon(icon, color: Colors.white, size: 20),
         const SizedBox(width: 8),
         Text(
           text,
           style: GoogleFonts.poppins(
             fontSize: 14,
-            color: Colors.white70,
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],

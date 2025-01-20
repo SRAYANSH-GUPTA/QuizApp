@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/model/quiz_model.dart';
 import "package:quiz_app/services/questions_fetch.dart";
-
+import 'package:quiz_app/utils/error_handler.dart';
+import 'dart:developer';
 // State class to hold quiz-related data
 class QuizState {
   final String? selectedTopic;
@@ -58,8 +59,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
     try {
       final quiz = await QuestionsFetch().fetchQuestions();
 
-      // Filter questions based on the selected topic
       if (quiz.topic == topic) {
+        log(quiz.toString());
         state = state.copyWith(
           currentQuiz: quiz,
           questions: quiz.questions,
@@ -73,7 +74,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       }
     } catch (e) {
       state = state.copyWith(
-        error: e.toString(),
+        error: ErrorHandler.getErrorMessage(e),
         isLoading: false,
       );
     }

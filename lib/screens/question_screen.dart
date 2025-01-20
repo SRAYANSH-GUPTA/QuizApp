@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'dart:async';
-import "dart:convert";
-import 'package:quiz_app/model/quiz_model.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:quiz_app/screens/result_screen.dart';
+import 'package:quiz_app/utils/error_handler.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
   final String topic;
@@ -16,9 +16,10 @@ class QuestionScreen extends ConsumerStatefulWidget {
 }
 
 class _QuestionState extends ConsumerState<QuestionScreen> {
-  late Timer _timer;
+  Timer? _timer;
   int _remainingTime = 0;
   var currentQuestionIndex = 0;
+  String? _error;
 
   @override
   void initState() {
@@ -28,29 +29,38 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
   }
 
   Future<void> _initializeQuiz() async {
-    // Initialize the quiz
-    await ref.read(quizProvider.notifier).setTopic(widget.topic);
+    try {
+      // Initialize the quiz
+      await ref.read(quizProvider.notifier).setTopic(widget.topic);
 
-    // Only set the timer if the widget is still mounted
-    if (mounted) {
-      final currentQuiz = ref.read(quizProvider).currentQuiz;
-      if (currentQuiz != null) {
+      // Only set the timer if the widget is still mounted
+      if (mounted) {
+        final currentQuiz = ref.read(quizProvider).currentQuiz;
+        if (currentQuiz != null) {
+          setState(() {
+            _remainingTime = currentQuiz.duration * 60;
+          });
+          startTimer();
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() {
-          _remainingTime = currentQuiz.duration * 60;
+          _error = ErrorHandler.getErrorMessage(e);
         });
-        startTimer();
       }
     }
   }
 
   void startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
         setState(() {
           _remainingTime--;
         });
       } else {
-        _timer.cancel();
+        _timer?.cancel();
         // End quiz when time runs out
         navigateToResult();
       }
@@ -87,20 +97,82 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
         currentQuestionIndex++;
       });
     } else {
-      _timer.cancel();
+      _timer?.cancel();
       navigateToResult();
     }
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final quizState = ref.watch(quizProvider);
+
+    if (_error != null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Svg('assets/backgorund3.svg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                margin: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _error!,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _error = null;
+                        });
+                        _initializeQuiz();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.red,
+                      ),
+                      child: Text(
+                        'Try Again',
+                        style: GoogleFonts.poppins(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     if (quizState.isLoading) {
       return const Scaffold(
@@ -112,12 +184,62 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
 
     if (quizState.error != null) {
       return Scaffold(
-        body: Center(
-          child: Text(
-            quizState.error!,
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              color: Colors.red,
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Svg('assets/backgorund3.svg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                margin: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      quizState.error!,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _error = null;
+                          currentQuestionIndex = 0;
+                        });
+                        ref.read(quizProvider.notifier).resetQuiz();
+                        _initializeQuiz();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.red,
+                      ),
+                      child: Text(
+                        'Try Again',
+                        style: GoogleFonts.poppins(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -141,8 +263,11 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: Svg('assets/backgorund3.svg'),
+            fit: BoxFit.cover,
+          ),
         ),
         child: SafeArea(
           child: Padding(

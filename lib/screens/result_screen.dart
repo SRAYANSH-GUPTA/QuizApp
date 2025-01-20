@@ -2,19 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
-
+import 'package:quiz_app/screens/topic.dart' as topic;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:quiz_app/providers/coin_provider.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
   const ResultScreen({super.key});
 
-@override
+  @override
   ConsumerState<ResultScreen> createState() => _ResultState();
-  }
+}
+
 class _ResultState extends ConsumerState<ResultScreen> {
+  late int earnedCoins;
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateAndSaveCoins();
+  }
+
+  Future<void> _calculateAndSaveCoins() async {
+    final score = ref.read(quizProvider.notifier).calculateScore();
+    earnedCoins = _calculateCoins(score);
+
+    // Use the coinProvider to update coins
+    await ref.read(coinProvider.notifier).addCoins(earnedCoins);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  int _calculateCoins(double score) {
+    // Coin strategy:
+    // Score >= 90: 100 coins
+    // Score >= 80: 80 coins
+    // Score >= 70: 60 coins
+    // Score >= 60: 40 coins
+    // Score >= 50: 20 coins
+    // Below 50: 10 coins
+    if (score >= 90) return 100;
+    if (score >= 80) return 80;
+    if (score >= 70) return 60;
+    if (score >= 60) return 40;
+    if (score >= 50) return 20;
+    return 10;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;  
     final quizState = ref.watch(quizProvider);
     final correctAnswers =
         ref.read(quizProvider.notifier).getCorrectAnswersCount();
@@ -24,10 +62,9 @@ class _ResultState extends ConsumerState<ResultScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue.shade800, Colors.purple.shade800],
+          image: DecorationImage(
+            image: AssetImage('assets/backgorund2.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(
@@ -71,6 +108,25 @@ class _ResultState extends ConsumerState<ResultScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.monetization_on,
+                                  color: Colors.amber,
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '+$earnedCoins coins',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.amber,
+                                  ),
+                                ),
+                              ],
+                            ),
                             Text(
                               'Score: ${score.toStringAsFixed(2)}',
                               style: GoogleFonts.poppins(
@@ -86,24 +142,32 @@ class _ResultState extends ConsumerState<ResultScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              ref.read(quizProvider.notifier).resetQuiz();
-                              // Navigator.pushAndRemoveUntil(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => const Topic()),
-                              //   (route) => false,
-                              // );
-                            },
-                            icon: const Icon(Icons.refresh),
-                            label: Text(
-                              'Try Again',
-                              style: GoogleFonts.poppins(fontSize: 16),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue.shade800,
+                          Container(
+                            width: width * 0.5,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                ref.read(quizProvider.notifier).resetQuiz();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const topic.Topic()),
+                                  (route) => false,
+                                );
+                              },
+                              icon: const Icon(Icons.refresh),
+                              
+                              label: Text(
+                                'Try Again',
+                                style: GoogleFonts.poppins(fontSize: 16),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

@@ -34,7 +34,7 @@
 26        android:debuggable="true"
 27        android:extractNativeLibs="true"
 28        android:icon="@mipmap/ic_launcher"
-29        android:label="quiz_app" >
+29        android:label="QuizFiesta" >
 30        <activity
 31            android:name="com.example.quiz_app.MainActivity"
 32            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

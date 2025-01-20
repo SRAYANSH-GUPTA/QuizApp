@@ -47,15 +47,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
   QuizNotifier() : super(QuizState());
 
   Future<void> setTopic(String topic) async {
-    if(mounted)
-    {
+    if (mounted) {
       state = state.copyWith(
         selectedTopic: topic,
         isLoading: true,
         error: null,
       );
     }
-
 
     try {
       final quiz = await QuestionsFetch().fetchQuestions();
@@ -97,15 +95,17 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
   // Calculate score based on selected answers
   double calculateScore() {
+    if (state.currentQuiz == null) return 0;
+
     double score = 0;
     for (var question in state.questions) {
       final selectedAnswer = state.selectedAnswers[question.id];
       if (selectedAnswer != null) {
         final correctOption = question.options.firstWhere((o) => o.isCorrect);
         if (selectedAnswer == correctOption.description) {
-          score += state.quizzes.first.correctAnswerMarks;
+          score += state.currentQuiz!.correctAnswerMarks;
         } else {
-          score -= state.quizzes.first.negativeMarks;
+          score -= state.currentQuiz!.negativeMarks;
         }
       }
     }

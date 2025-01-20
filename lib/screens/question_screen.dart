@@ -5,6 +5,7 @@ import 'package:quiz_app/providers/quiz_provider.dart';
 import 'dart:async';
 import "dart:convert";
 import 'package:quiz_app/model/quiz_model.dart';
+import 'package:quiz_app/screens/result_screen.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
   final String topic;
@@ -57,12 +58,12 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
   }
 
   void navigateToResult() {
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => const ResultScreen(),
-    //   ),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ResultScreen(),
+      ),
+    );
   }
 
   String formatTime(int seconds) {

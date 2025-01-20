@@ -1,16 +1,34 @@
-import 'package:dio/dio.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:quiz_app/model/quiz_model.dart';
-import 'dart:developer';
+import 'package:quiz_app/utils/error_handler.dart';
+
+import 'dart:convert';
+import 'dart:async';
+
 class QuestionsFetch {
-  final Dio dio = Dio();
+ 
 
   Future<Quiz> fetchQuestions() async {
     try {
-      final response = await dio.get('https://api.jsonserve.com/Uw5CrX');
-      log(response.data.toString());
-      return Quiz.fromJson(response.data);
+      final response = await http
+          .get(Uri.parse('https://api.jsonserve.com/Uw5CrX'))
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return Quiz.fromJson(jsonDecode(response.body));
+      } else {
+        throw ServerError(
+          'Failed to load questions',
+          statusCode: response.statusCode,
+        );
+      }
+    } on SocketException {
+      throw NetworkError('No internet connection');
+    } on TimeoutException {
+      throw NetworkError('Connection timed out');
     } catch (e) {
-      throw Exception('Failed to fetch quiz data: $e');
+      throw ServerError('Failed to fetch questions: $e');
     }
   }
 }

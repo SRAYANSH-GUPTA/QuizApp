@@ -25,10 +25,9 @@ class _StartScreenState extends State<StartScreen> {
       backgroundColor: Colors.white,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue.shade800, Colors.purple.shade800],
+           image: DecorationImage(
+            image: AssetImage('assets/background5.png'),
+            fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(
@@ -38,14 +37,10 @@ class _StartScreenState extends State<StartScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.quiz,
-                    size: 100,
-                    color: Colors.blue,
-                  ),
+                 
                   const SizedBox(height: 40),
                   Text(
-                    "Learn with Flutter",
+                    "Learn With QuizFiesta",
                     style: GoogleFonts.poppins(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,

@@ -8,6 +8,7 @@ import 'package:quiz_app/screens/question_screen.dart';
 import 'package:quiz_app/widgets/coin_display.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quiz_app/providers/coin_provider.dart';
+import 'package:quiz_app/utils/error_handler.dart';
 
 final quizProvider = FutureProvider<Quiz>((ref) async {
   final questionsFetch = QuestionsFetch();
@@ -52,15 +53,42 @@ class _TopicState extends ConsumerState<Topic> {
                     child: CircularProgressIndicator(color: Colors.white),
                   ),
                   error: (error, stack) => Center(
-                    child: Padding(
+                    child: Container(
                       padding: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Error loading quiz: $error',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                        textAlign: TextAlign.center,
+                      margin: const EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            ErrorHandler.getErrorMessage(error),
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.refresh(quizProvider);
+                            },
+                            child: Text(
+                              'Try Again',
+                              style: GoogleFonts.poppins(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

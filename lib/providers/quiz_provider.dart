@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/model/quiz_model.dart';
+import "package:quiz_app/services/questions_fetch.dart";
 
 // State class to hold quiz-related data
 class QuizState {
@@ -9,6 +10,7 @@ class QuizState {
   final Map<int, String> selectedAnswers; // questionId -> selected answer
   final bool isLoading;
   final String? error;
+  final Quiz? currentQuiz;
 
   QuizState({
     this.selectedTopic,
@@ -17,6 +19,7 @@ class QuizState {
     this.selectedAnswers = const {},
     this.isLoading = false,
     this.error,
+    this.currentQuiz,
   });
 
   QuizState copyWith({
@@ -26,6 +29,7 @@ class QuizState {
     Map<int, String>? selectedAnswers,
     bool? isLoading,
     String? error,
+    Quiz? currentQuiz,
   }) {
     return QuizState(
       selectedTopic: selectedTopic ?? this.selectedTopic,
@@ -34,6 +38,7 @@ class QuizState {
       selectedAnswers: selectedAnswers ?? this.selectedAnswers,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
+      currentQuiz: currentQuiz ?? this.currentQuiz,
     );
   }
 }
@@ -42,19 +47,32 @@ class QuizNotifier extends StateNotifier<QuizState> {
   QuizNotifier() : super(QuizState());
 
   Future<void> setTopic(String topic) async {
-    state = state.copyWith(
-      selectedTopic: topic,
-      isLoading: true,
-      error: null,
-    );
+    if(mounted)
+    {
+      state = state.copyWith(
+        selectedTopic: topic,
+        isLoading: true,
+        error: null,
+      );
+    }
+
 
     try {
-      // TODO: Implement your API call to fetch quizzes by topic
-      // final quizzes = await QuizService.getQuizzesByTopic(topic);
-      // state = state.copyWith(
-      //   quizzes: quizzes,
-      //   isLoading: false,
-      // );
+      final quiz = await QuestionsFetch().fetchQuestions();
+
+      // Filter questions based on the selected topic
+      if (quiz.topic == topic) {
+        state = state.copyWith(
+          currentQuiz: quiz,
+          questions: quiz.questions,
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(
+          error: 'No questions available for this topic',
+          isLoading: false,
+        );
+      }
     } catch (e) {
       state = state.copyWith(
         error: e.toString(),

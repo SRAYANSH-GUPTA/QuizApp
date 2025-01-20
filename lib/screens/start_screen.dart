@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:quiz_app/screens/topic.dart';
 import 'dart:developer';
 
 
@@ -64,7 +64,7 @@ class _StartScreenState extends State<StartScreen> {
                 ElevatedButton(
                   onPressed: () {
                     log("Button pressed");
-                    
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Topic()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,

@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'dart:async';
-import "dart:convert";
-import 'package:quiz_app/model/quiz_model.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:quiz_app/screens/result_screen.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
@@ -16,7 +15,7 @@ class QuestionScreen extends ConsumerStatefulWidget {
 }
 
 class _QuestionState extends ConsumerState<QuestionScreen> {
-  late Timer _timer;
+  Timer? _timer;
   int _remainingTime = 0;
   var currentQuestionIndex = 0;
 
@@ -44,13 +43,14 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
   }
 
   void startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
         setState(() {
           _remainingTime--;
         });
       } else {
-        _timer.cancel();
+        _timer?.cancel();
         // End quiz when time runs out
         navigateToResult();
       }
@@ -87,14 +87,14 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
         currentQuestionIndex++;
       });
     } else {
-      _timer.cancel();
+      _timer?.cancel();
       navigateToResult();
     }
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -141,8 +141,11 @@ class _QuestionState extends ConsumerState<QuestionScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: Svg('assets/backgorund3.svg'),
+            fit: BoxFit.cover,
+          ),
         ),
         child: SafeArea(
           child: Padding(

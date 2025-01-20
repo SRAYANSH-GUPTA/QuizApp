@@ -39,5 +39,6 @@ QuizFiesta is an interactive quiz application developed as part of a technical a
   <img src="readme_images/4.jpeg" alt="Home Screen" width="250" height="400" />
 </div>  
 
-
-## Project Structure
+## Demo Video
+<video src="demo.mp4" controls="controls" style="max-width: 250;">
+</video>

@@ -31,14 +31,13 @@ QuizFiesta is an interactive quiz application developed as part of a technical a
 ## Screenshots
 
 <div style="display: flex; gap: 10px; align-items: center;">
-  <img src="readme_images/2.jpeg" alt="Home Screen" width="250" height = "400" />
-  <img src="readme_images/1.jpeg" alt="Home Screen" width="250" height="400" />
-
-
-
-
- <img src="readme_images/3.jpeg" alt="Home Screen" width="250" height="400" />
-
+  <img src="readme_images/1.jpeg" alt="Home Screen" width="250" height = "400" />
+  <img src="readme_images/2.jpeg" alt="Home Screen" width="250" height="400" />
 </div>  
+<div style="display: flex; gap: 10px; align-items: center;">
+  <img src="readme_images/3.jpeg" alt="Home Screen" width="250" height = "400" />
+  <img src="readme_images/4.jpeg" alt="Home Screen" width="250" height="400" />
+</div>  
+
 
 ## Project Structure
